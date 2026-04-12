@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+:root {
+  --font-geist: "Geist", sans-serif;
+}
+
+body {
+  font-family: var(--font-geist), Arial, Helvetica, sans-serif;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.card-glow {
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.2), 0 4px 24px rgba(124, 58, 237, 0.08);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #7c3aed, #0891b2);
+  transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
