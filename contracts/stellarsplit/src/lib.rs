@@ -198,19 +198,19 @@ impl StellarSplitContract {
 mod test {
     use super::*;
     use soroban_sdk::{
-        testutils::{Address as _, MockAuth, MockAuthInvoke},
+        testutils::Address as _,
         token::{Client as TokenClient, StellarAssetClient},
-        vec, Env, IntoVal, String,
+        vec, Env, String,
     };
 
-    fn setup_token(env: &Env, admin: &Address) -> (TokenClient, Address) {
+    fn setup_token<'a>(env: &'a Env, admin: &Address) -> (TokenClient<'a>, Address) {
         let token_contract = env.register_stellar_asset_contract_v2(admin.clone());
         let token_address = token_contract.address();
         let token = TokenClient::new(env, &token_address);
         (token, token_address)
     }
 
-    fn mint(env: &Env, admin: &Address, token_address: &Address, to: &Address, amount: i128) {
+    fn mint(env: &Env, _admin: &Address, token_address: &Address, to: &Address, amount: i128) {
         let asset_client = StellarAssetClient::new(env, token_address);
         asset_client.mock_all_auths().mint(to, &amount);
     }
@@ -411,16 +411,18 @@ mod test {
 
         let initiator = Address::generate(&env);
         let p1 = Address::generate(&env);
+        let p2 = Address::generate(&env);
         let token_admin = Address::generate(&env);
         let (_, token_address) = setup_token(&env, &token_admin);
 
-        mint(&env, &Env::default(), &token_address, &p1, 1000);
+        mint(&env, &token_admin, &token_address, &p1, 1000);
 
-        let participants = vec![&env, p1.clone()];
+        // Two participants so the split doesn't settle after p1's first payment
+        let participants = vec![&env, p1.clone(), p2.clone()];
         let split_id = client.create_split(
             &initiator,
             &String::from_str(&env, "Coffee"),
-            &10,
+            &20,
             &token_address,
             &participants,
         );
